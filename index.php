@@ -61,6 +61,14 @@
 	<script>
 		$(document).ready(function(){
 			$(".lined").linedtextarea();
+			$(".datetime").each(function(){
+				var timestamp = parseInt($(this).text());
+				$(this).text(formatTime(timestamp));
+			});
+			$(".post").on("click",function(){
+				var post_id = $(this).children(".title").text();
+				window.location.href = "?id=" + post_id;
+			});
 		});
 		$(document).delegate('textarea', 'keydown', function(e) {
 			var keyCode = e.keyCode || e.which;
@@ -97,12 +105,66 @@
 			var expires = "expires="+d.toUTCString();
 			document.cookie = cname + "=" + cvalue + "; " + expires;
 		}
+
+		function ordinal_suffix_of(i) {
+			var j = i % 10,
+				k = i % 100;
+			if (j == 1 && k != 11) {
+				return i + "st";
+			}
+			if (j == 2 && k != 12) {
+				return i + "nd";
+			}
+			if (j == 3 && k != 13) {
+				return i + "rd";
+			}
+			return i + "th";
+		}
+		function pad(n, width, z) {
+			z = z || '0';
+			n = n + '';
+			return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+		}
+
+		function formatTime(timestamp) {
+			var date = new Date(timestamp*1000);
+			var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+			return months[date.getMonth()] + " " + ordinal_suffix_of(date.getDate()) + ", " + date.getFullYear() + ", " + pad(date.getHours(),2) + ":" + pad(date.getMinutes(),2) + ":" + pad(date.getSeconds(),2)
+		}
 	</script>
 	<script src="js/highlightjs/highlight.pack.js"></script>
 </head>
 
 <body>
 	<div class="wrapper">
+		<div class="sidebar">
+			<div class="container">
+
+				<h1>Recent posts</h1>
+				<?php
+					$recent_posts = explode("+",urlencode($_COOKIE['posts']));
+					arsort($recent_posts);
+					foreach($recent_posts as $post) {
+						if(!ctype_alnum(str_replace("-","",$post))) {
+							continue;
+						}
+						$time_posted = base_convert(substr($post,0,6),36,10);
+						$highlighting = substr($post,11);
+						if($highlighting == "" || $highlighting == NULL) {
+							$highlighting = "none";
+						}
+						?>
+						<div class="post">
+							<span class="title"><?php echo substr($post,0,10); ?></span><br/>
+							<span class="datetime"><?php echo $time_posted; ?></span><br/>
+							<span class="type"><?php echo getSyntaxName("full",$highlighting); ?></span><br/>
+						</div>
+						<?php
+					}
+				?>
+			</div>
+		</div>
 		<?php if(isset($_GET['id'])) { 
 			//$filename = "$root/pastes/" . htmlspecialchars($_GET['id']) . ".txt";
 			$fileID = substr(htmlspecialchars($_GET['id']),0,10);
@@ -157,30 +219,6 @@
 				$('.code-box').each(function(i, block) {
 					hljs.highlightBlock(block);
 				});
-				
-				var timestamp = parseInt($(".datetime").text());
-				var date = new Date(timestamp*1000);
-				var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-				function ordinal_suffix_of(i) {
-					var j = i % 10,
-						k = i % 100;
-					if (j == 1 && k != 11) {
-						return i + "st";
-					}
-					if (j == 2 && k != 12) {
-						return i + "nd";
-					}
-					if (j == 3 && k != 13) {
-						return i + "rd";
-					}
-					return i + "th";
-				}
-				function pad(n, width, z) {
-					z = z || '0';
-					n = n + '';
-					return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
-				}
-				$(".datetime").text(months[date.getMonth()] + " " + ordinal_suffix_of(date.getDate()) + ", " + date.getFullYear() + ", " + pad(date.getHours(),2) + ":" + pad(date.getMinutes(),2) + ":" + pad(date.getSeconds(),2));
 
 				$('.themes').on("change",function(){
 					$('.highlight-style').attr("href","js/highlightjs/styles/" + $(this).val() + ".css");

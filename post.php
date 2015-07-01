@@ -55,5 +55,11 @@
 	file_put_contents($file,bzcompress($contents,9));
 
 	$_SESSION['timesubmitted'] = time();
+	if(!isset($_COOKIE['posts'])) {
+		$cookie = $paste_id . "-" . $highlighting;
+	} else {
+		$cookie = $_COOKIE['posts'] . " " . $paste_id . "-" . $highlighting;
+	}
+	setcookie("posts",$cookie,strtotime('+1 year'));
 
 	header("Location: $root_url/?id=$paste_id");
