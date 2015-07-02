@@ -61,11 +61,16 @@ textarea,input,select,.code-box, .code-box * {
 	color: #000;
 	transition: .25s;
 }
+.bottom-stuff {
+	width: calc(100% - 200px);
+	padding-top: 16px;
+	float: left;
+}
 .file-info {
-	padding-top: 8px;
 	text-shadow: 0px -1px 0px #000;
 	display: inline-block;
 	font-size: 8pt;
+	padding-top: 4px;
 }
 .file-info .caption {
 	padding-right: 32px;
@@ -76,10 +81,17 @@ textarea,input,select,.code-box, .code-box * {
 	color: #BBDEFB;
 	font-weight: 700;
 }
+select {
+	background-color: #000;
+	border: 0;
+	border: 1px solid #666;
+	color: #ccc;
+}
 .themes {
 	display: inline-block;
 	float: right;
-	margin-top: 8px;
+	width: 184px;
+	margin-top: 16px;
 }
 .code-box {
 	color: #fff;
@@ -126,6 +138,48 @@ textarea,input,select,.code-box, .code-box * {
 }
 .sidebar .post:hover {
 	background-color: rgba(255,255,255,0.1);
+}
+a {
+	text-decoration: none;
+}
+.buttons {
+	text-align: center;
+	height: 48px;
+	line-height: 32px;
+	background-color: #666;
+	padding-top: 8px;
+}
+.button {
+	font-weight: 700;
+	font-size: 8pt;
+	color: #fff;
+	text-decoration: none;
+	min-width: 70px;
+	background-color: #3F51B5;
+	display: inline-block;
+	text-align: center;
+	border-radius: 4px;
+	text-transform: uppercase;
+	box-shadow: 0px 2px 5px rgba(0,0,0,0.66);
+	padding-left: 4px;
+	padding-right: 4px;
+	transition: .25s;
+}
+.button:hover {
+	background-color: #5C6BC0;
+	transition: .25s;
+}
+.button:active {
+	background-color: #7986CB;
+}
+.edit_button {
+	background-color: #4CAF50 !important;
+}
+.edit_button:hover {
+	background-color: #66BB6A !important;
+}
+.edit_button:active {
+	background-color: #81C784 !important;
 }
 
 
@@ -184,6 +238,6 @@ textarea,input,select,.code-box, .code-box * {
 
 .linedwrap {
 	width: calc(100% - 200px);
-	height: calc(100% - 68px);
+	height: calc(100vh - 68px);
 	box-shadow: 0px 4px 10px rgba(0,0,0,0.66);
 }

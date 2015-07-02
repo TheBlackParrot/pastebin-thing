@@ -2,9 +2,11 @@
 	include_once dirname(__FILE__) . "/config.php";
 
 	function getSyntaxName($method,$str) {
+		if($str == "nohighlight") {
+			$str = "none";
+		}
 		$vals = array(
 				"none" => "None",
-				"nohighlight" => "None",
 				"apache" => "Apache",
 				"sh" => "Bash",
 				"cs" => "C#",
@@ -139,8 +141,16 @@
 <body>
 	<div class="wrapper">
 		<div class="sidebar">
+			<div class="buttons">
+				<?php
+					if(isset($_GET['id'])) { 
+						$fileID = substr(htmlspecialchars($_GET['id']),0,10);
+						?> <a href="<?php echo "$root_url/?edit=$fileID"; ?>"><span class="button edit_button">Edit Paste</span></a> <?php
+					}
+				?>
+				<a href="<?php echo "$root_url"; ?>"><span class="button">New Paste</span></a>
+			</div>
 			<div class="container">
-
 				<h1>Recent posts</h1>
 				<?php
 					$recent_posts = explode("+",urlencode($_COOKIE['posts']));
@@ -165,7 +175,8 @@
 				?>
 			</div>
 		</div>
-		<?php if(isset($_GET['id'])) { 
+		<?php
+			if(isset($_GET['id'])) { 
 			//$filename = "$root/pastes/" . htmlspecialchars($_GET['id']) . ".txt";
 			$fileID = substr(htmlspecialchars($_GET['id']),0,10);
 			if(!ctype_alnum($fileID)) {
@@ -194,11 +205,13 @@
 			$dateSubmitted = base_convert(substr($fileID,0,6),36,10);
 			// $dateSubmitted = date('F jS, Y, H:i:s',base_convert(substr($fileID,0,6),36,10));
 		?>
-			<div class="code-box lined <?php echo $highlighting; ?>"><?php echo bzdecompress(file_get_contents("$dir/$foundFile")); ?></div><br/>
-			<div class="file-info" unselectable="on">
-				<span class="caption" unselectable="on"><strong>Date submitted</strong><span class="datetime"><?php echo $dateSubmitted; ?></span></span>
-				<span class="caption" unselectable="on"><strong>Paste type</strong><?php echo getSyntaxName("full",$highlighting); ?></span>
-				<span class="caption" unselectable="on"><strong>File size</strong><?php echo "$fileSize KB"; ?></span>
+			<div class="code-box lined <?php echo $highlighting; ?>"><?php echo bzdecompress(file_get_contents("$dir/$foundFile")); ?></div>
+			<div class="bottom-stuff">
+				<div class="file-info" unselectable="on">
+					<span class="caption" unselectable="on"><strong>Date submitted</strong><span class="datetime"><?php echo $dateSubmitted; ?></span></span>
+					<span class="caption" unselectable="on"><strong>Paste type</strong><?php echo getSyntaxName("full",$highlighting); ?></span>
+					<span class="caption" unselectable="on"><strong>File size</strong><?php echo "$fileSize KB"; ?></span>
+				</div>
 			</div>
 			<select class="themes">
 				<?php
@@ -234,18 +247,45 @@
 			</script>
 		<?php } else { ?>
 			<form action="post.php" method="POST">
-				<textarea class="input-box lined" name="contents"></textarea><br/>
-				<select name="highlighting">
-					<?php
-						$vals = getSyntaxName("all");
-						foreach($vals as $value => $name) {
-							?>
-								<option value="<?php echo $value; ?>"><?php echo $name; ?></option>
-							<?php
+				<?php
+					$textarea_contents = "";
+					if(isset($_GET['edit'])) {
+						$fileID = substr(htmlspecialchars($_GET['edit']),0,10);
+						if(!ctype_alnum($fileID)) {
+							echo "Invalid ID.";
+							break;
 						}
-					?>
-				</select>
-				<input type="submit" value="Submit">
+
+						$dirIter = new DirectoryIterator($dir);
+						$foundFile = NULL;
+						foreach ($dirIter as $fileInfo) {
+							if(substr($fileInfo->getBasename(),0,10) == $fileID) {
+								$foundFile = $fileInfo->getBasename();
+								break;
+							}
+						}
+						
+						if(!$foundFile) {
+							$textarea_contents = "File not found.";
+						} else {
+							$textarea_contents = bzdecompress(file_get_contents("$dir/$foundFile"));
+						}
+					}
+				?>
+				<textarea class="input-box lined" name="contents"><?php echo $textarea_contents; ?></textarea>
+				<div class="bottom-stuff">
+					<select name="highlighting">
+						<?php
+							$vals = getSyntaxName("all");
+							foreach($vals as $value => $name) {
+								?>
+									<option value="<?php echo $value; ?>"><?php echo $name; ?></option>
+								<?php
+							}
+						?>
+					</select>
+					<input type="submit" value="Submit">
+				</div>
 			</form>
 		<?php } ?>
 	</div>
