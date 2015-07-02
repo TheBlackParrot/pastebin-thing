@@ -1,0 +1,40 @@
+.markdown-preview {
+	background-color: #444;
+	color: #fff;
+	float: left;
+	margin-top: 16px;
+	box-shadow: 0px 4px 10px rgba(0,0,0,0.66);
+	margin-bottom: 16px;
+	min-width: 600px;
+	width: 100%;
+}
+.markdown-preview .mdh {
+	padding: 16px;
+	border: 0;
+	float: left;
+}
+.markdown-content {
+	margin-top: 51px;
+}
+.css-switcher {
+	float: right;
+	display: inline-block;
+	height: 51px;
+	line-height: 51px;
+	padding-right: 16px;
+}
+.css-switch {
+	width: 24px;
+	height: 24px;
+	margin-left: 6px;
+	margin-top: 13px;
+	display: inline-block;
+}
+.css-switch#light {
+	border: 1px solid #000;
+	background-color: #fff;
+}
+.css-switch#dark {
+	border: 1px solid #fff;
+	background-color: #000;
+}

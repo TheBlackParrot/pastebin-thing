@@ -228,6 +228,47 @@
 					}
 				?>
 			</select>
+			<?php
+				if($highlighting == "md") {
+					include_once "$root/includes/parsedown.php";
+					include_once "$root/includes/parsedown-extra.php";
+					$parsedown = new ParsedownExtra();
+					$parsedown->setMarkupEscaped(true);
+			?>
+					<div class="markdown-preview">
+						<link rel="stylesheet" type="text/css" href="css/markdown-light.css" class="md-css"/>
+						<link rel="stylesheet" type="text/css" href="css/markdown.css"/>
+						<h1 class="mdh">Markdown Preview</h1>
+						<div class="css-switcher">
+							<a href="css/markdown.css" style="float: left; margin-right: 16px; color: #fff;" class="css-link">CSS</a>
+							<div class="css-switch" id="light"></div>
+							<div class="css-switch" id="dark"></div>
+						</div>
+						<div class="markdown-content">
+							<?php echo $parsedown->text(html_entity_decode(bzdecompress(file_get_contents("$dir/$foundFile")))); ?>
+						</div>
+					</div>
+					<script>
+						$(document).ready(function(){
+							$(".css-switch").on("click",function(){
+								switch($(this).attr("id")) {
+									case "dark":
+										$(".md-css").attr("href","css/markdown-dark.css");
+										$(".css-link").attr("href","css/markdown-dark.css");
+										break;
+
+									default:
+									case "light":
+										$(".md-css").attr("href","css/markdown-light.css");
+										$(".css-link").attr("href","css/markdown-light.css");
+										break;
+								}
+							});
+						});
+					</script>
+			<?php
+				}
+			?>
 			<script>
 				$('.code-box').each(function(i, block) {
 					hljs.highlightBlock(block);

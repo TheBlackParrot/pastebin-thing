@@ -27,6 +27,7 @@ textarea,input,select,.code-box, .code-box * {
 	width: calc(100% - 32px);
 	padding: 16px;
 	padding-top: 15px;
+	min-width: 600px;
 }
 .wrapper .input-box, .wrapper .code-box {
 	border: none;
@@ -106,8 +107,10 @@ select {
 }
 .sidebar .container {
 	padding: 8px;
+	height: calc(100% - 72px);
+	overflow-y: auto;
 }
-.sidebar h1 {
+.sidebar h1, .markdown-preview h1 {
 	color: #fff;
 	font-weight: 700;
 	font-size: 14pt;
