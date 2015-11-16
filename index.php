@@ -48,6 +48,38 @@
 				break;
 		}
 	}
+
+	if(isset($_GET['raw'])) {
+		header("Content-type: text/plain");
+		global $dir;
+
+		$textarea_contents = "";
+
+		if(isset($_GET['id'])) { 
+			$fileID = substr(htmlspecialchars($_GET['id']),0,10);
+			if(!ctype_alnum($fileID)) {
+				echo "Invalid ID.";
+				break;
+			}
+
+			$dirIter = new DirectoryIterator($dir);
+			$foundFile = NULL;
+			foreach ($dirIter as $fileInfo) {
+				if(substr($fileInfo->getBasename(),0,10) == $fileID) {
+					$foundFile = $fileInfo->getBasename();
+					break;
+				}
+			}
+			
+			if(!$foundFile) {
+				$textarea_contents = "File not found.";
+			} else {
+				$textarea_contents = bzdecompress(file_get_contents("$dir/$foundFile"));
+			}
+		}
+
+		die(html_entity_decode($textarea_contents));
+	}
 ?>
 
 <html>
